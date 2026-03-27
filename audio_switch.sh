@@ -1,6 +1,6 @@
 #!/bin/bash
-SPEAKERS="alsa_output.usb-Generic_USB_Audio-00.HiFi__hw_Audio__sink"
-HEADSET="alsa_output.usb-Corsair_CORSAIR_HS80_RGB_Wireless_Gaming_Receiver_16ad2621000300da-00.analog-stereo"
+SPEAKERS="YOUR_SPEAKERS_SINK"
+HEADSET="YOUR_HEADSET_SINK"
 
 case "$1" in
     status)
