@@ -1,0 +1,8 @@
+{
+  "budgetDisplayName": "Gemini Weekly",
+  "costAmount": 0.0,
+  "costIntervalStart": "2026-04-07T00:00:00Z",
+  "budgetAmount": 25.0,
+  "budgetAmountType": "SPECIFIED_AMOUNT",
+  "currencyCode": "USD"
+}
