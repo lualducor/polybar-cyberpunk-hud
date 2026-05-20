@@ -55,23 +55,25 @@ echo "Patching config..."
 
 # Network interface
 if [[ -n "$NET_IFACE" ]]; then
-    sed -i "s/YOUR_NET_IFACE/$NET_IFACE/g" "$DEST/config.ini"
+    escaped_iface=$(printf '%s\n' "$NET_IFACE" | sed 's/[\/&]/\\&/g')
+    sed -i -E "s|^interface = .*|interface = $escaped_iface|" "$DEST/config.ini"
 fi
 
 # Klipper IP
 if [[ -n "$MOONRAKER" ]]; then
     # Strip trailing slash
     MOONRAKER="${MOONRAKER%/}"
-    # klipper.sh uses MOONRAKER_URL env var; patch the fallback default
-    sed -i "s|http://YOUR_KLIPPER_IP:7125|$MOONRAKER|g" "$DEST/klipper.sh"
-    sed -i "s|http://YOUR_KLIPPER_IP|${MOONRAKER%:*}://${MOONRAKER##*://}|g" "$DEST/config.ini"
+    escaped_moonraker=$(printf '%s\n' "$MOONRAKER" | sed 's/[\/&]/\\&/g')
+    moonraker_host=$(printf '%s\n' "$MOONRAKER" | sed -E 's#^(https?://[^/:]+).*#\1#')
+    escaped_moonraker_host=$(printf '%s\n' "$moonraker_host" | sed 's/[\/&]/\\&/g')
+
+    sed -i -E "s|^MOONRAKER=.*|MOONRAKER=\"\${MOONRAKER_URL:-$escaped_moonraker}\"|" "$DEST/klipper.sh"
+    sed -i -E "s|^click-left = xdg-open .*&$|click-left = xdg-open \"\${MOONRAKER_HOST:-$escaped_moonraker_host}\" \\&|" "$DEST/config.ini"
 fi
 
 # AI workdir
-if [[ "$AI_WORKDIR" != "$HOME" ]]; then
-    escaped=$(printf '%s\n' "$AI_WORKDIR" | sed 's/[\/&]/\\&/g')
-    sed -i "s|AI_WORKDIR:-\$HOME|AI_WORKDIR:-$escaped|g" "$DEST/ai_cli_launcher.sh"
-fi
+escaped_ai_workdir=$(printf '%s\n' "$AI_WORKDIR" | sed 's/[\/&]/\\&/g')
+sed -i -E "s|^WORKDIR=.*|WORKDIR=\"\${AI_WORKDIR:-$escaped_ai_workdir}\"|" "$DEST/ai_cli_launcher.sh"
 
 echo ""
 echo "Done. Next steps:"

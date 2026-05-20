@@ -47,14 +47,17 @@ FILES=(
     "night_mode.sh"
     "quick_notes.sh"
     "spotify.sh"
+    "spotify_ctrl.sh"
     "mic.sh"
     "cpu_temp.sh"
     "uptime.sh"
     "local_ip.sh"
     "klipper.sh"
     "spotify_notify.sh"
+    "ai_cli_launcher.sh"
     "ai_budget.py"
     "update_gemini_budget.py"
+    "i3_workspace.py"
     "identify_audio_sinks.sh"
 )
 

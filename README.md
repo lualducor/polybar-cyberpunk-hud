@@ -15,6 +15,7 @@ A cyberpunk-styled dual-monitor Polybar setup for Linux Mint / Cinnamon with AI 
 - **`update_gemini_budget.py`** — CLI helper to update Gemini billing JSON
 - **`identify_audio_sinks.sh`** — helper to discover PulseAudio sink names
 - **`setup.sh`** — interactive one-command installer: patches network interface, Moonraker URL, and AI workdir for any system
+- **`i3_workspace.py`** — bottom-bar workspace/window helper for create, delete, minimize, restore, and fullscreen actions
 
 ## What's New in V2
 
@@ -162,7 +163,9 @@ CENTER: clock
 RIGHT:  GPT budget | Gemini | Claude budget | klipper | weather | network | mic | volume | audio-switch | dnd | nuke | power
 
 [bar/right-bottom] — primary monitor, bottom
+LEFT:   window nudge | float | center | workspace new/delete/min/max
 CENTER: workspaces
+RIGHT:  hide | fullscreen | close
 
 [bar/left]       — secondary portrait monitor
 LEFT:   cpu | temp | ram | disk | date | uptime | ip | window title
@@ -174,6 +177,8 @@ LEFT:   cpu | temp | ram | disk | date | uptime | ip | window title
 
 ```
 config.ini              — main polybar config (all bars and modules)
+config.ini.bak-minmax   — saved layout variant backup
+config.ini.bak-scratchpad — saved scratchpad layout backup
 launch.sh               — start/restart all bars
 autostart.sh            — called by the .desktop autostart entry
 ai_budget.py            — AI cost tracker (OpenAI, Anthropic, Gemini)
@@ -187,6 +192,7 @@ identify_audio_sinks.sh — list PulseAudio sinks for config
 spotify.sh              — Spotify title display
 spotify_ctrl.sh         — Spotify prev/play-pause/next
 spotify_notify.sh       — dunst full track notification
+i3_workspace.py         — i3 workspace/window control helper
 night_mode.sh           — redshift toggle
 dnd.sh                  — dunst Do Not Disturb toggle
 mic.sh                  — microphone mute toggle

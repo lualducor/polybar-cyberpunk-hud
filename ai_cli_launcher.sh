@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKDIR="${AI_WORKDIR:-$HOME}"
+WORKDIR="${AI_WORKDIR:-/home/lu47/Desktop/Lucholabs}"
 
 case "$1" in
     codex)

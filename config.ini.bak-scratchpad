@@ -137,7 +137,7 @@ click-left       = ~/.config/polybar/quick_notes.sh
 type             = custom/text
 label            = " FILES "
 label-foreground = ${colors.secondary}
-click-left       = nemo $HOME
+click-left       = nemo /home/lu47
 
 [module/terminal]
 type             = custom/text
@@ -205,14 +205,12 @@ type             = custom/text
 label            = " MIN "
 label-foreground = ${colors.primary}
 click-left       = python3 ~/.config/polybar/i3_workspace.py minimize
-click-middle     = python3 ~/.config/polybar/i3_workspace.py toggle
 
 [module/workspace-restore]
 type             = custom/text
 label            = " MAX "
 label-foreground = ${colors.secondary}
 click-left       = python3 ~/.config/polybar/i3_workspace.py restore
-click-middle     = python3 ~/.config/polybar/i3_workspace.py toggle
 
 [module/spotify-prev]
 type             = custom/text
@@ -398,7 +396,7 @@ label-minlen   = 0
 label-maxlen   = 200
 label = %output%
 label-foreground = ${colors.primary}
-click-left = xdg-open "${MOONRAKER_HOST:-http://192.168.40.35}" &
+click-left = xdg-open http://192.168.40.35 &
 
 [settings]
 screenchange-reload = true
@@ -451,15 +449,14 @@ click-left       = i3-msg move position center
 type             = custom/text
 label            = " _ "
 label-foreground = ${colors.warn}
-click-left       = python3 ~/.config/polybar/i3_workspace.py minimize
-click-middle     = python3 ~/.config/polybar/i3_workspace.py toggle
-click-right      = python3 ~/.config/polybar/i3_workspace.py restore
+click-left       = i3-msg move scratchpad
+click-right      = i3-msg scratchpad show
 
 [module/win-maximize]
 type             = custom/text
 label            = " □ "
 label-foreground = ${colors.secondary}
-click-left       = python3 ~/.config/polybar/i3_workspace.py fullscreen
+click-left       = i3-msg fullscreen toggle
 
 [module/win-close]
 type             = custom/text

@@ -1,5 +1,5 @@
 #!/bin/bash
-MOONRAKER="${MOONRAKER_URL:-http://YOUR_KLIPPER_IP:7125}"
+MOONRAKER="${MOONRAKER_URL:-http://192.168.40.35:7125}"
 WINDOW=${KLIPPER_WINDOW:-0}
 
 DATA=$(curl -s --max-time 3 "${MOONRAKER}/printer/objects/query?print_stats&display_status&virtual_sdcard" 2>/dev/null)
