@@ -32,7 +32,6 @@ A cyberpunk-styled dual-monitor Polybar setup for Linux Mint / Cinnamon with AI 
 |--------|-------------|
 | `ai-budget-gpt` | OpenAI spend — session % / weekly % |
 | `ai-budget-claude` | Claude usage — `session% - weekly% / session-reset` (live from subscription) |
-| `lmstudio` | LM Studio launcher (click to open the app) |
 | `ai-launch-agy` | Agy launcher (click to open terminal) |
 | `klipper` | Moonraker print status — state, progress, ETA |
 | `weather` | Temperature + condition via Open-Meteo (no key) |
@@ -163,7 +162,7 @@ Or edit the fallback directly in `~/.config/polybar/klipper.sh`.
 [bar/right]      — primary monitor, top
 LEFT:   tray | menu | clipboard | nightmode | quicknotes | files | terminal | screenshot | spotify
 CENTER: clock
-RIGHT:  GPT budget | LMS | Agy | Claude budget | klipper | weather | network | mic | volume | audio-switch | dnd | nuke | power
+RIGHT:  GPT budget | Agy | Claude budget | klipper | weather | network | mic | volume | audio-switch | dnd | nuke | power
 
 [bar/right-bottom] — primary monitor, bottom
 LEFT:   window nudge | float | center | workspace new/delete/min/max
