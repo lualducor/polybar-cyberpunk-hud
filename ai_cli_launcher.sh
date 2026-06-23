@@ -11,9 +11,9 @@ case "$1" in
         CMD="claude"
         TITLE="Claude"
         ;;
-    gemini)
-        CMD="gemini"
-        TITLE="Gemini"
+    agy)
+        CMD="agy"
+        TITLE="Agy"
         ;;
     *)
         exit 1

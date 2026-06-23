@@ -10,7 +10,7 @@ fi
 CHOSEN=$(printf "NUKE SYSTEM\nREBOOT SEQUENCE\nDISCONNECT\n${BT_OPTION}" | \
     rofi -dmenu -i \
     -p "// SYSTEM CONTROL //" \
-    -theme-str 'window {width: 400px;} listview {lines: 4;}')
+    -theme-str 'window {width: 400px; location: north east; anchor: north east; x-offset: -8px; y-offset: 48px;} listview {lines: 4;}')
 
 case "$CHOSEN" in
     "NUKE SYSTEM")     systemctl poweroff ;;

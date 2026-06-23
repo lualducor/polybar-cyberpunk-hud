@@ -8,7 +8,7 @@ A cyberpunk-styled dual-monitor Polybar setup for Linux Mint / Cinnamon with AI 
 
 - **AI budget modules** — live cost display for OpenAI (GPT), Anthropic (Claude), and Gemini directly in the bar
   - Session and weekly spend with color-coded budget warnings
-  - Left-click: open a terminal with that AI CLI (codex / claude / gemini)
+  - Left-click: open a terminal with that AI CLI (codex / claude / agy)
   - Middle-click: reset session counter · Right-click: force refresh
 - **`ai_budget.py`** — reads costs from API billing endpoints and local Claude/Codex session logs, no extra tools required
 - **`ai_cli_launcher.sh`** — configurable working directory via `AI_WORKDIR` env var
@@ -32,7 +32,8 @@ A cyberpunk-styled dual-monitor Polybar setup for Linux Mint / Cinnamon with AI 
 |--------|-------------|
 | `ai-budget-gpt` | OpenAI spend — session % / weekly % |
 | `ai-budget-claude` | Anthropic spend — session % / weekly % |
-| `ai-launch-gemini` | Gemini launcher (click to open terminal) |
+| `lmstudio` | LM Studio launcher (click to open the app) |
+| `ai-launch-agy` | Agy launcher (click to open terminal) |
 | `klipper` | Moonraker print status — state, progress, ETA |
 | `weather` | Temperature + condition via Open-Meteo (no key) |
 | `spotify-*` | Prev / play-pause / next + right-click dunst notification |
@@ -160,7 +161,7 @@ Or edit the fallback directly in `~/.config/polybar/klipper.sh`.
 [bar/right]      — primary monitor, top
 LEFT:   tray | menu | clipboard | nightmode | quicknotes | files | terminal | screenshot | spotify
 CENTER: clock
-RIGHT:  GPT budget | Gemini | Claude budget | klipper | weather | network | mic | volume | audio-switch | dnd | nuke | power
+RIGHT:  GPT budget | LMS | Agy | Claude budget | klipper | weather | network | mic | volume | audio-switch | dnd | nuke | power
 
 [bar/right-bottom] — primary monitor, bottom
 LEFT:   window nudge | float | center | workspace new/delete/min/max
@@ -184,7 +185,7 @@ autostart.sh            — called by the .desktop autostart entry
 ai_budget.py            — AI cost tracker (OpenAI, Anthropic, Gemini)
 ai_budget.env.example   — template for API keys and budgets
 update_gemini_budget.py — update Gemini billing JSON from CLI
-ai_cli_launcher.sh      — open kitty terminal with codex/claude/gemini
+ai_cli_launcher.sh      — open kitty terminal with codex/claude/agy
 klipper.sh              — Moonraker print status
 weather.sh              — Open-Meteo weather
 audio_switch.sh         — toggle between two audio sinks
