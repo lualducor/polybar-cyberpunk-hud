@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -18,6 +19,8 @@ CACHE_TTL_SECONDS = 300
 DEFAULT_CCUSAGE_DIST = Path.home() / "Downloads" / "ccusage-main" / "apps" / "ccusage" / "dist" / "index.js"
 CLAUDE_PROJECTS_DIR = Path.home() / ".claude" / "projects"
 CODEX_SESSIONS_DIR = Path.home() / ".codex" / "sessions"
+CLAUDE_CREDENTIALS = Path.home() / ".claude" / ".credentials.json"
+ANTHROPIC_USAGE_URL = "https://api.anthropic.com/api/oauth/usage"
 
 PRIMARY = "#00f3ff"
 SECONDARY = "#39ff14"
@@ -299,10 +302,34 @@ def anthropic_cost_total(api_key: str, start_ts: int, end_ts: int) -> float:
     return total / 100.0
 
 
+def resolve_node() -> str:
+    node = shutil.which("node")
+    if node:
+        return node
+    # Polybar's process PATH usually lacks nvm; fall back to the newest nvm node.
+    candidates = sorted(
+        (Path.home() / ".nvm" / "versions" / "node").glob("*/bin/node"), reverse=True
+    )
+    return str(candidates[0]) if candidates else "node"
+
+
 def resolve_ccusage_dist(env: dict) -> Path:
     raw_path = env.get("CCUSAGE_DIST_PATH", "").strip()
-    candidate = Path(os.path.expanduser(raw_path)) if raw_path else DEFAULT_CCUSAGE_DIST
-    return candidate
+    if raw_path:
+        return Path(os.path.expanduser(raw_path))
+
+    # Auto-discover a global ccusage install (it ships src/cli.js, no dist/index.js).
+    for entry in ("src/cli.js", "dist/index.js"):
+        matches = sorted(
+            (Path.home() / ".nvm" / "versions" / "node").glob(
+                f"*/lib/node_modules/ccusage/{entry}"
+            ),
+            reverse=True,
+        )
+        if matches:
+            return matches[0]
+
+    return DEFAULT_CCUSAGE_DIST
 
 
 def run_ccusage_json(env: dict, *args: str):
@@ -311,7 +338,7 @@ def run_ccusage_json(env: dict, *args: str):
         raise FileNotFoundError(str(ccusage_dist))
 
     completed = subprocess.run(
-        ["node", str(ccusage_dist), *args],
+        [resolve_node(), str(ccusage_dist), *args],
         check=True,
         capture_output=True,
         text=True,
@@ -325,6 +352,14 @@ def format_remaining_duration(target_ts: float) -> str:
     hours = remaining_minutes // 60
     minutes = remaining_minutes % 60
     return f"{hours}h{minutes:02d}m"
+
+
+def format_clock_remaining(target_ts: float) -> str:
+    remaining_seconds = max(0, int(target_ts - time.time()))
+    remaining_minutes = remaining_seconds // 60
+    hours = remaining_minutes // 60
+    minutes = remaining_minutes % 60
+    return f"{hours}:{minutes:02d}"
 
 
 def claude_reset_snapshot(env: dict) -> dict:
@@ -487,7 +522,66 @@ def claude_costs_from_local_logs(session_start: int, week_start: int) -> dict:
     }
 
 
+def claude_oauth_token() -> str:
+    data = read_json(CLAUDE_CREDENTIALS)
+    if not isinstance(data, dict):
+        return ""
+    oauth = data.get("claudeAiOauth")
+    if not isinstance(oauth, dict):
+        return ""
+    expires_at = oauth.get("expiresAt")
+    if isinstance(expires_at, (int, float)) and expires_at > 0:
+        # expiresAt is epoch milliseconds; skip a known-expired token.
+        if time.time() * 1000.0 >= float(expires_at):
+            return ""
+    token = oauth.get("accessToken")
+    return token if isinstance(token, str) else ""
+
+
+def anthropic_usage_snapshot() -> dict:
+    token = claude_oauth_token()
+    if not token:
+        return {}
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "anthropic-beta": "oauth-2025-04-20",
+        "user-agent": "polybar-ai-budget/1.0",
+    }
+
+    try:
+        payload = http_get_json(ANTHROPIC_USAGE_URL, headers)
+    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError):
+        return {}
+
+    five_hour = payload.get("five_hour") or {}
+    seven_day = payload.get("seven_day") or {}
+    session_pct = five_hour.get("utilization")
+    week_pct = seven_day.get("utilization")
+    if session_pct is None or week_pct is None:
+        return {}
+
+    session_reset_at = 0.0
+    raw_reset = five_hour.get("resets_at")
+    if isinstance(raw_reset, str):
+        try:
+            session_reset_at = datetime.fromisoformat(raw_reset.replace("Z", "+00:00")).timestamp()
+        except ValueError:
+            session_reset_at = 0.0
+
+    return {
+        "session_used_pct": parse_float(session_pct),
+        "week_used_pct": parse_float(week_pct),
+        "session_reset_at": session_reset_at,
+        "usage_source": "oauth",
+    }
+
+
 def anthropic_cost_snapshot(env: dict, session_start: int, week_start: int) -> dict:
+    usage = anthropic_usage_snapshot()
+    if usage:
+        return usage
+
     try:
         reset_snapshot = claude_reset_snapshot(env)
         if reset_snapshot.get("reset_at") is not None:
@@ -577,6 +671,18 @@ def fmt_pct_from_used(used_pct: float) -> str:
     return f"{remaining_pct:.1f}%"
 
 
+def fmt_used(used_pct: float) -> str:
+    return f"{min(100.0, max(0.0, used_pct)):.0f}%"
+
+
+def used_severity_color(used_pct: float) -> str:
+    if used_pct >= 90:
+        return ALERT
+    if used_pct >= 75:
+        return WARN
+    return SECONDARY
+
+
 def render(provider: str, env: dict, data: dict) -> str:
     meta = PROVIDERS[provider]
     label = meta["label"]
@@ -587,6 +693,22 @@ def render(provider: str, env: dict, data: dict) -> str:
         return f"%{{F{DISABLED}}}{label} FILE%{{F-}}"
     if data.get("error"):
         return f"%{{F{ALERT}}}{label} ERR%{{F-}}"
+
+    if (
+        provider == "anthropic"
+        and data.get("usage_source") == "oauth"
+        and data.get("session_used_pct") is not None
+        and data.get("week_used_pct") is not None
+    ):
+        session_pct = parse_float(data.get("session_used_pct"))
+        week_pct = parse_float(data.get("week_used_pct"))
+        reset_ts = parse_float(data.get("session_reset_at"))
+        remaining = format_clock_remaining(reset_ts) if reset_ts > 0 else "?"
+        value_color = used_severity_color(max(session_pct, week_pct))
+        return (
+            f"%{{F{PRIMARY}}}{label}%{{F-}} "
+            f"%{{F{value_color}}}{session_pct:.0f}-{week_pct:.0f}/{remaining}%{{F-}}"
+        )
 
     weekly_budget = parse_float(env.get(meta["weekly_env"]))
     session_budget = parse_float(env.get(meta["session_env"]))

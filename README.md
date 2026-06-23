@@ -31,7 +31,7 @@ A cyberpunk-styled dual-monitor Polybar setup for Linux Mint / Cinnamon with AI 
 | Module | Description |
 |--------|-------------|
 | `ai-budget-gpt` | OpenAI spend — session % / weekly % |
-| `ai-budget-claude` | Anthropic spend — session % / weekly % |
+| `ai-budget-claude` | Claude usage — `session% - weekly% / session-reset` (live from subscription) |
 | `lmstudio` | LM Studio launcher (click to open the app) |
 | `ai-launch-agy` | Agy launcher (click to open terminal) |
 | `klipper` | Moonraker print status — state, progress, ETA |
@@ -70,7 +70,9 @@ sudo apt install polybar rofi playerctl dunst btop copyq redshift \
 
 **Optional (AI modules):**
 - OpenAI: admin API key with billing read access
-- Anthropic: admin API key — or just works from local `~/.claude/projects/` logs
+- Anthropic: shows live session/weekly usage % from your Claude Code subscription
+  (reads the local OAuth token in `~/.claude/.credentials.json`, no key needed).
+  Fallback to a session reset-countdown needs `ccusage`: `npm i -g ccusage`.
 - Gemini: Cloud Billing budget JSON via `update_gemini_budget.py`
 
 ---
