@@ -5,6 +5,8 @@ set -e
 
 DEST="$HOME/.config/polybar"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+EXT_UUID="cyberpunk-hud@openmirai.local"
+EXT_DEST="$HOME/.local/share/gnome-shell/extensions/$EXT_UUID"
 
 echo "=== polybar-cyberpunk-hud setup ==="
 echo ""
@@ -38,6 +40,17 @@ cp "$REPO_DIR"/*.sh "$DEST/"
 cp "$REPO_DIR"/*.py "$DEST/"
 cp "$REPO_DIR"/config.ini "$DEST/"
 chmod +x "$DEST"/*.sh
+
+# Install the GNOME Shell bridge used for Wayland window/workspace actions.
+mkdir -p "$EXT_DEST"
+install -m 644 "$REPO_DIR/gnome-extension/metadata.json" "$EXT_DEST/metadata.json"
+install -m 644 "$REPO_DIR/gnome-extension/extension.js" "$EXT_DEST/extension.js"
+gnome-extensions enable "$EXT_UUID" 2>/dev/null || true
+
+mkdir -p "$HOME/.config/rofi" "$HOME/.config/autostart"
+install -m 755 "$REPO_DIR/rofi/powermenu.sh" "$HOME/.config/rofi/powermenu.sh"
+sed "s|@HOME@|$HOME|g" "$REPO_DIR/polybar-cyberpunk-hud.desktop.in" \
+    > "$HOME/.config/autostart/polybar-cyberpunk-hud.desktop"
 
 # Copy ai_budget.env from example if it doesn't exist yet
 if [[ ! -f "$DEST/ai_budget.env" ]]; then
@@ -78,6 +91,6 @@ sed -i -E "s|^WORKDIR=.*|WORKDIR=\"\${AI_WORKDIR:-$escaped_ai_workdir}\"|" "$DES
 echo ""
 echo "Done. Next steps:"
 echo "  1. Edit $DEST/ai_budget.env and fill in your API keys."
-echo "  2. Check $DEST/config.ini — adjust monitor names (DP-2, HDMI-0) to your outputs."
-echo "     Run: xrandr --listmonitors"
-echo "  3. Launch polybar: bash $DEST/launch.sh"
+echo "  2. Log out and back in once if the GNOME bridge was newly installed."
+echo "  3. Launch Polybar: bash $DEST/launch.sh"
+echo "     Monitors are detected automatically through XWayland."

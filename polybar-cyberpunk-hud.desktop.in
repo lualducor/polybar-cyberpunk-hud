@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Polybar Cyberpunk HUD
+Comment=Launch the GNOME Wayland Cyberpunk HUD
+Exec=@HOME@/.config/polybar/autostart.sh
+Terminal=false
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=3

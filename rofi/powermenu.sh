@@ -7,16 +7,16 @@ else
     BT_OPTION="UPLINK OFFLINE"
 fi
 
-CHOSEN=$(printf "SETTINGS\nNUKE SYSTEM\nREBOOT SEQUENCE\nDISCONNECT\n${BT_OPTION}" | \
+CHOSEN=$(printf "SETTINGS\nNUKE SYSTEM\nREBOOT SEQUENCE\nSWITCH USER → I3\n${BT_OPTION}" | \
     rofi -dmenu -i \
     -p "// SYSTEM CONTROL //" \
     -theme-str 'window {width: 400px; location: north east; anchor: north east; x-offset: -8px; y-offset: 48px;} listview {lines: 5;}')
 
 case "$CHOSEN" in
-    "SETTINGS")        env WEBKIT_DISABLE_COMPOSITING_MODE=1 cinnamon-settings & ;;
+    "SETTINGS")        gnome-control-center & ;;
     "NUKE SYSTEM")     systemctl poweroff ;;
     "REBOOT SEQUENCE") systemctl reboot ;;
-    "DISCONNECT")      cinnamon-session-quit --logout --no-prompt ;;
+    "SWITCH USER → I3") ~/.config/polybar/switch_user.sh ;;
     "UPLINK ONLINE")   bluetoothctl power off ;;
     "UPLINK OFFLINE")  bluetoothctl power on ;;
 esac

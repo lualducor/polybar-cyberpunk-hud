@@ -1,6 +1,6 @@
 # Polybar Cyberpunk HUD — V3
 
-A cyberpunk-styled dual-monitor Polybar setup for Linux Mint / Cinnamon with AI cost tracking, Klipper 3D printer monitoring, Spotify controls, and a full suite of system modules.
+A cyberpunk-styled dual-monitor Polybar setup refactored for GNOME 46 on Wayland, with AI cost tracking, Klipper monitoring, Spotify controls, and system modules. Polybar renders through XWayland while a minimal GNOME Shell bridge provides native workspace and focused-window actions.
 
 ---
 
@@ -15,7 +15,8 @@ A cyberpunk-styled dual-monitor Polybar setup for Linux Mint / Cinnamon with AI 
 - **`update_gemini_budget.py`** — CLI helper to update Gemini billing JSON
 - **`identify_audio_sinks.sh`** — helper to discover PulseAudio sink names
 - **`setup.sh`** — interactive one-command installer: patches network interface, Moonraker URL, and AI workdir for any system
-- **`i3_workspace.py`** — bottom-bar workspace/window helper for create, delete, minimize, restore, and fullscreen actions
+- **GNOME Wayland bridge** — native workspace switching and focused-window move, minimize, maximize, fullscreen, close, and always-on-top actions
+- **Automatic monitor detection** — maps the primary and secondary XWayland outputs at launch
 
 ## What's New in V2
 
@@ -27,6 +28,11 @@ A cyberpunk-styled dual-monitor Polybar setup for Linux Mint / Cinnamon with AI 
 ---
 
 ## Modules
+
+The lower main-display bar includes a clickable `PEDAL: 0` profile picker
+between FULL and the workspaces. Hold Right Ctrl and press the outside pedals
+to switch profiles, or the middle pedal to return to 0. See
+[pedal profiles and setup](streamdeck-pedal/README.md) for mappings and installation.
 
 | Module | Description |
 |--------|-------------|
@@ -61,7 +67,7 @@ A cyberpunk-styled dual-monitor Polybar setup for Linux Mint / Cinnamon with AI 
 
 ```bash
 sudo apt install polybar rofi playerctl dunst btop copyq redshift \
-  xdotool wmctrl bluez blueman gnome-screenshot nemo curl \
+  bluez blueman gnome-screenshot nemo curl \
   lm-sensors pulseaudio-utils python3
 ```
 
@@ -117,7 +123,7 @@ After install, edit files in `~/.config/polybar/`:
 |------|-------------|
 | `config.ini` | `YOUR_NET_IFACE` → your interface (`ip link show`) |
 | `config.ini` | `YOUR_KLIPPER_IP` → your Moonraker IP/host |
-| `config.ini` | Monitor names in `[bar/right]`, `[bar/left]`, `[bar/right-bottom]` (`xrandr --listmonitors`) |
+| `launch.sh` | Detects primary and secondary XWayland monitor names automatically |
 | `klipper.sh` | `MOONRAKER_URL` env var, or edit the fallback default |
 | `audio_switch.sh` | Your two PulseAudio sink names (`pactl list short sinks` or run `identify_audio_sinks.sh`) |
 | `ai_budget.env` | Copy from `ai_budget.env.example`, fill in API keys and budget amounts |
@@ -194,7 +200,8 @@ identify_audio_sinks.sh — list PulseAudio sinks for config
 spotify.sh              — Spotify title display
 spotify_ctrl.sh         — Spotify prev/play-pause/next
 spotify_notify.sh       — dunst full track notification
-i3_workspace.py         — i3 workspace/window control helper
+gnome_hud.py            — client for GNOME-native workspace/window actions
+gnome-extension/        — local GNOME Shell D-Bus bridge
 night_mode.sh           — redshift toggle
 dnd.sh                  — dunst Do Not Disturb toggle
 mic.sh                  — microphone mute toggle

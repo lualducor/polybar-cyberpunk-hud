@@ -1,0 +1,137 @@
+{
+  "0": {
+    "description": "Scroll + Enter",
+    "buttons": {
+      "0": {
+        "action": "scroll",
+        "direction": -1
+      },
+      "1": {
+        "action": "key",
+        "key": "KEY_ENTER"
+      },
+      "2": {
+        "action": "scroll",
+        "direction": 1
+      }
+    }
+  },
+  "1": {
+    "description": "Scroll + microphone mute/restore",
+    "buttons": {
+      "0": {
+        "action": "scroll",
+        "direction": -1
+      },
+      "1": {
+        "action": "mic"
+      },
+      "2": {
+        "action": "scroll",
+        "direction": 1
+      }
+    }
+  },
+  "2": {
+    "description": "Windows: previous / open-confirm / next",
+    "buttons": {
+      "0": {
+        "action": "window",
+        "direction": -1
+      },
+      "1": {
+        "action": "window",
+        "direction": 0
+      },
+      "2": {
+        "action": "window",
+        "direction": 1
+      }
+    }
+  },
+  "3": {
+    "description": "Volume: down / mute / up",
+    "buttons": {
+      "0": {
+        "action": "volume",
+        "amount": "-5%"
+      },
+      "1": {
+        "action": "audio_mute"
+      },
+      "2": {
+        "action": "volume",
+        "amount": "+5%"
+      }
+    }
+  },
+  "4": {
+    "description": "Media: previous / play-pause / next",
+    "buttons": {
+      "0": {
+        "action": "key",
+        "key": "KEY_PREVIOUSSONG"
+      },
+      "1": {
+        "action": "key",
+        "key": "KEY_PLAYPAUSE"
+      },
+      "2": {
+        "action": "key",
+        "key": "KEY_NEXTSONG"
+      }
+    }
+  },
+  "5": {
+    "description": "Browser: back / address bar / forward",
+    "buttons": {
+      "0": {
+        "action": "chord",
+        "keys": [
+          "KEY_LEFTALT",
+          "KEY_LEFT"
+        ]
+      },
+      "1": {
+        "action": "chord",
+        "keys": [
+          "KEY_LEFTCTRL",
+          "KEY_L"
+        ]
+      },
+      "2": {
+        "action": "chord",
+        "keys": [
+          "KEY_LEFTALT",
+          "KEY_RIGHT"
+        ]
+      }
+    }
+  },
+  "6": {
+    "description": "Clipboard: copy / select all / paste",
+    "buttons": {
+      "0": {
+        "action": "chord",
+        "keys": [
+          "KEY_LEFTCTRL",
+          "KEY_C"
+        ]
+      },
+      "1": {
+        "action": "chord",
+        "keys": [
+          "KEY_LEFTCTRL",
+          "KEY_A"
+        ]
+      },
+      "2": {
+        "action": "chord",
+        "keys": [
+          "KEY_LEFTCTRL",
+          "KEY_V"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "uuid": "cyberpunk-hud@openmirai.local",
+  "name": "Cyberpunk HUD Bridge",
+  "description": "GNOME Wayland workspace and focused-window bridge for Polybar Cyberpunk HUD",
+  "shell-version": ["46"],
+  "version": 1
+}

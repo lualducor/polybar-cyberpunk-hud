@@ -1,27 +1,5 @@
 #!/bin/bash
 
-get_active_window_id() {
-    xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | awk -F' ' '{print $5}'
-}
-
-get_window_name() {
-    local wid="$1"
-    xprop -id "$wid" _NET_WM_NAME 2>/dev/null | sed -n 's/.*= "\(.*\)"/\1/p' | head -n1
-}
-
-get_window_pid() {
-    local wid="$1"
-    xprop -id "$wid" _NET_WM_PID 2>/dev/null | awk '{print $3}'
-}
-
-close_window() {
-    local wid="$1"
-
-    wmctrl -ic "$wid" >/dev/null 2>&1 && exit 0
-    command -v xdotool >/dev/null 2>&1 && xdotool windowkill "$wid" >/dev/null 2>&1 && exit 0
-    return 1
-}
-
 confirm_kill() {
     local label="$1"
 
@@ -105,22 +83,9 @@ confirm_kill() {
     return 1
 }
 
-wid="$(get_active_window_id)"
-[ -z "$wid" ] || [ "$wid" = "0x0" ] && exit 0
-
-window_name="$(get_window_name "$wid")"
+window_name="$(python3 ~/.config/polybar/gnome_hud.py title 2>/dev/null)"
 [ -z "$window_name" ] && window_name="this window"
 window_name="${window_name:0:40}"
 
 confirm_kill "$window_name" || exit 0
-
-pid="$(get_window_pid "$wid")"
-
-if [ -n "$pid" ]; then
-    kill -TERM "$pid" >/dev/null 2>&1
-    sleep 0.4
-    kill -0 "$pid" >/dev/null 2>&1 && kill -KILL "$pid" >/dev/null 2>&1
-    exit 0
-fi
-
-close_window "$wid"
+python3 ~/.config/polybar/gnome_hud.py action close

@@ -147,8 +147,7 @@ check_tool "polybar"        "polybar"
 check_tool "rofi"           "rofi"
 check_tool "playerctl"      "playerctl"
 check_tool "dunstctl"       "dunst"
-check_tool "xdotool"        "xdotool"
-check_tool "wmctrl"         "wmctrl"
+check_tool "gnome-extensions" "gnome-shell-extension-prefs"
 check_tool "bluetoothctl"   "bluez"
 check_tool "blueman-manager" "blueman"
 check_tool "copyq"          "copyq"
@@ -166,7 +165,7 @@ echo "" >> $OUTPUT_FILE
 # STEP 6: Monitor layout
 # ------------------------------------------------------------
 echo ""
-echo -e "${YELLOW}[06]${NC} Monitor layout..."
+echo -e "${YELLOW}[06]${NC} XWayland monitor layout..."
 MONITORS=$(xrandr --query | grep " connected")
 echo "$MONITORS" | while read line; do
     echo -e "${CYAN}     $line${NC}"

@@ -57,8 +57,10 @@ FILES=(
     "ai_cli_launcher.sh"
     "ai_budget.py"
     "update_gemini_budget.py"
-    "i3_workspace.py"
+    "gnome_hud.py"
+    "pedal_profile.py"
     "identify_audio_sinks.sh"
+    "switch_user.sh"
 )
 
 for f in "${FILES[@]}"; do
@@ -105,10 +107,15 @@ lon=-74.07
 REDSHIFT
 echo -e "${GREEN}     ✓ Bogota coords set (4.71N, 74.07W)${NC}"
 
-# Disable Cinnamon session restore
-echo -e "${YELLOW}[07]${NC} Disabling Cinnamon session restore..."
-gsettings set org.cinnamon.SessionManager auto-save-session false 2>/dev/null
-echo -e "${GREEN}     ✓ Done${NC}"
+# Install the GNOME Wayland bridge.
+echo -e "${YELLOW}[07]${NC} Installing GNOME Wayland bridge..."
+EXT_UUID="cyberpunk-hud@openmirai.local"
+EXT_DIR="$HOME/.local/share/gnome-shell/extensions/$EXT_UUID"
+mkdir -p "$EXT_DIR"
+install -m 644 "$SCRIPT_DIR/gnome-extension/metadata.json" "$EXT_DIR/metadata.json"
+install -m 644 "$SCRIPT_DIR/gnome-extension/extension.js" "$EXT_DIR/extension.js"
+gnome-extensions enable "$EXT_UUID" 2>/dev/null || true
+echo -e "${GREEN}     ✓ Done (log out/in once when newly installed)${NC}"
 
 # Update autostart entry
 echo -e "${YELLOW}[08]${NC} Updating autostart entry..."

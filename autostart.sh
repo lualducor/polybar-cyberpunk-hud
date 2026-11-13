@@ -1,34 +1,24 @@
 #!/bin/bash
 # ============================================================
 # POLYBAR MASTER AUTOSTART
-# Correct launch order: dunst → copyq → redshift → polybar
+# GNOME Wayland launch order: helpers → Polybar/XWayland
 # ============================================================
 
 # Kill any stale instances
-killall -q polybar
-killall -q tray.py
-killall -q dunst
-killall -q copyq
-
-sleep 0.5
-
-# 1. Dunst must start first — DND module depends on it
-dunst &
+# Start optional helpers without replacing GNOME/session services.
+pgrep -u "$UID" -x dunst >/dev/null || dunst &
 sleep 0.5
 
 # 2. copyq clipboard daemon — silent background
-copyq &
+pgrep -u "$UID" -x copyq >/dev/null || copyq &
 sleep 0.3
 
 # 3. Redshift — Bogota coords, schedule-based, starts inactive
-redshift -l 4.7110:-74.0721 &
+pgrep -u "$UID" -x redshift >/dev/null || redshift -l 4.7110:-74.0721 &
 sleep 0.3
 
-# 4. Disable Cinnamon session restore
-gsettings set org.cinnamon.SessionManager auto-save-session false 2>/dev/null
-
-# 5. Initialize DND to green on every boot
+# Initialize DND state.
 echo "green" > /tmp/dnd_state
 
-# 6. Start bars
+# Start bars after GNOME Shell and XWayland settle.
 ~/.config/polybar/launch.sh
